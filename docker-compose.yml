@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: ./back-end
+    container_name: flask_back-end
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./back-end:/app
+    environment:
+      - FLASK_ENV=development
+
+  frontend:
+    build: ./front-end
+    container_name: react_front-end
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
