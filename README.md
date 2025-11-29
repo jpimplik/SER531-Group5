@@ -1,16 +1,18 @@
-# FoodPriceNet - An An Ontological Approach to Semantic Modeling of Food Price Relationships
-
-# About FoodPriceNet
+## FoodPriceNet - An Ontological Approach to Semantic Modeling of Food Price Relationships
 
 ...
 
-### Tech Stack
+### ⚙️ Tech Stack
 
-*Frontend*: React.js
-*Backend*: Flask
-*Ontology Editor*: Protege
-*Triple Store*: GraphDB
-*SPARQL Server*: Apache Jena Fuseki
+🔸**Frontend**: React.js
+\
+🔸**Backend**: Flask
+\
+🔸**Ontology Editor**: Protege
+\
+🔸**Triple Store**: GraphDB
+\
+🔸**SPARQL Server**: Apache Jena Fuseki
 
 ### Setup Instructions
 
