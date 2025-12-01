@@ -1,6 +1,10 @@
+version: "3.9"
+
 services:
   backend:
-    build: ./back-end
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile.dev
     container_name: flask_back-end
     ports:
       - "5000:5000"
@@ -8,11 +12,30 @@ services:
       - ./back-end:/app
     environment:
       - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5000
+    networks:
+      - app-network
 
   frontend:
-    build: ./front-end
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.dev
     container_name: react_front-end
     ports:
-      - "3000:80"
+      - "3000:3000"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    environment:
+    - CHOKIDAR_USEPOLLING=true
+    - CHOKIDAR_INTERVAL=100
     depends_on:
       - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
