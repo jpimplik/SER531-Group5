@@ -39,18 +39,20 @@ h2 {
   list-style-type: none;
 }
 
-.App-link {
-  color: #ffffff;
-  font-size: 1.1em;
-  text-decoration: none;
+ .get-started-btn {
   padding: 15px 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: #f08000;
+  border: none;
   border-radius: 15px;
-  transition: background-color 0.3s, color 0.3s;
-  background-color: #F08000;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
   width: 300px;
+  color: #ffffff;
 }
 
-.App-link:hover {
+.get-started-btn:hover {
   background-color: #FFA500;
   color: #ffffff;
   cursor: pointer;
