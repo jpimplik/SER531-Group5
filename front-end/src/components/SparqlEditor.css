@@ -2,8 +2,8 @@
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  width: 1000px;
-  max-width: 1000px;
+  width: 1200px;
+  max-width: 1200px;
   position: relative;
 }
 
@@ -100,3 +100,21 @@
   max-height: 300px;
   overflow: auto;
 }
+
+@media (max-width: 1300px) {
+  .sparql-editor-container {
+    width: 100%;
+    max-width: 100%;
+  }
+  .results-container {
+    max-height: 200px;
+  }
+}
+@media (max-width: 600px) {
+  .execute-query-btn, .clear-query-btn, .download-query-btn {
+    width: 100%;
+    font-size: 20px;
+    padding: 10px 20px;
+  }
+}
+

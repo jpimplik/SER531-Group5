@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react';
 import SparqlParser from 'sparqljs';
 import './SparqlEditor.css';
 
-const SparqlEditor = ({ endpoint }) => {
+const SparqlEditor = ({ endpoint, onResults }) => {
   const [query, setQuery] = useState('');
   const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
@@ -36,6 +36,7 @@ const SparqlEditor = ({ endpoint }) => {
       });
       const data = await response.json();
       setResults(data);
+      if (onResults) onResults(data);
     } catch (err) {
       setError(`Query execution failed: ${err.message}`);
     }
@@ -72,7 +73,7 @@ const SparqlEditor = ({ endpoint }) => {
       <div className="editor-controls">
         <div className="button-group">
           <button onClick={executeQuery} className="execute-query-btn"> Execute Query </button>
-          <button onClick={() => { setQuery(''); setResults(null); setError(null); }} className="clear-query-btn"> Clear Query </button>
+          <button onClick={() => { setQuery(''); setResults(null); setError(null); }} className="clear-query-btn"> Reset Query </button>
         </div>
       </div>
 

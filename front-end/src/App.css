@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   background: var(--app-bg) !important;
+  margin:auto;
 }
 
 :root {
