@@ -1,17 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './queryboard.css';
 import SparqlEditor from '../components/SparqlEditor.jsx';
 import QueryResultsPanel from '../components/QueryResultsPanel.jsx';
+import GraphViewer from '../components/GraphViewer.jsx';
+import LayoutSelect from '../components/LayoutSelect.jsx';
 
 const QueryBoard = () => {
+    const [graphElements, setGraphElements] = useState([]);
+    const [layoutName, setLayoutName] = useState('cose');
+    const [selectedNode, setSelectedNode] = useState(null);
+
+    // Transform SPARQL JSON to cytoscape elements
+    const sparqlToElements = (data) => {
+        const vars = (data && data.head && data.head.vars) || [];
+        const bindings = (data && data.results && data.results.bindings) || [];
+        if (!vars.length || !bindings.length) return [];
+
+        // determine variable names for s/p/o
+        let sVar = vars.includes('s') ? 's' : (vars.includes('subject') ? 'subject' : vars[0]);
+        let pVar = vars.includes('p') ? 'p' : (vars.includes('predicate') ? 'predicate' : vars[1] || vars[0]);
+        let oVar = vars.includes('o') ? 'o' : (vars.includes('object') ? 'object' : vars[2] || vars[1] || vars[0]);
+
+        const nodesMap = new Map();
+        const edges = [];
+
+        const shortLabel = (v) => {
+            try {
+                if (v.startsWith('http')) {
+                    const parts = v.split(/[\/\#]/);
+                    return parts[parts.length-1] || v;
+                }
+                return v;
+            } catch (e) { return v; }
+        };
+
+        bindings.forEach((b, i) => {
+            const s = b[sVar] && b[sVar].value;
+            const p = b[pVar] && b[pVar].value;
+            const o = b[oVar] && b[oVar].value;
+            if (!s || !o) return;
+
+            if (!nodesMap.has(s)) {
+                nodesMap.set(s, { id: s, label: shortLabel(s), full: s, rows: [] });
+            }
+            if (!nodesMap.has(o)) {
+                nodesMap.set(o, { id: o, label: shortLabel(o), full: o, rows: [] });
+            }
+
+            // attach the original binding row to both subject and object so clicking either shows the row
+            nodesMap.get(s).rows.push(b);
+            nodesMap.get(o).rows.push(b);
+
+            edges.push({ id: `e${i}`, source: s, target: o, label: p || '' });
+        });
+
+        const nodes = Array.from(nodesMap.values()).map(n => ({ data: n }));
+        const cyEdges = edges.map(e => ({ data: e }));
+        return nodes.concat(cyEdges);
+    };
+
+    const handleSparqlResults = (data) => {
+        // keep original results shown in editor results panel as well
+        try {
+            const elements = sparqlToElements(data);
+            setGraphElements(elements);
+            setSelectedNode(null);
+        } catch (e) {
+            console.error('Failed to transform SPARQL results to graph', e);
+        }
+    };
+
     return (
         <div className="query-board-container" style={{ alignItems: 'flex-start' }}>
             {/* Two-column layout: editor on left, results+visualization on right */}
             <div className="query-board-row" style={{ boxSizing: 'border-box' }}>
-                <div className="query-writing-section query-editor-col">
+                    <div className="query-writing-section query-editor-col">
                     <h2>SPARQL Query Board</h2>
                     <p>Write and execute your SPARQL queries here to explore food price data.</p>
-                    <SparqlEditor endpoint="https://dbpedia.org/sparql" />
+                    <SparqlEditor endpoint="https://dbpedia.org/sparql" onResults={handleSparqlResults} />
                 </div>
 
                 <div className="query-side-col">
@@ -29,8 +95,66 @@ const QueryBoard = () => {
                     {/* Query Visualization Section */}
                     <div className="query-visualization-section">
                         <h2>Query Visualization</h2>
+                        <div style={{ marginBottom: 8 }}>
+                            <LayoutSelect
+                                label="Layout:"
+                                value={layoutName}
+                                onChange={(v) => setLayoutName(v)}
+                                options={[
+                                    { value: 'cose', label: 'Cose' },
+                                    { value: 'grid', label: 'Grid' },
+                                    { value: 'breadthfirst', label: 'Breadth-first' },
+                                    { value: 'circle', label: 'Circle' },
+                                    { value: 'concentric', label: 'Concentric' },
+                                    { value: 'cose-bilkent', label: 'Cose Bilkent' },
+                                ]}
+                            />
+                        </div>
                         <div>
-                            {/* Placeholder for charts or graphs */}
+                            {/* Cytoscape graph will render here */}
+                            <GraphViewer
+                                elements={graphElements}
+                                layout={{ name: layoutName }}
+                                onNodeClick={(data) => setSelectedNode(data)}
+                            />
+
+                            {selectedNode && (
+                                <div className="node-details" style={{ marginTop: 12, padding: 10, border: '1px solid rgba(0,0,0,0.06)', borderRadius: 6, background: '#fff' }}>
+                                    <strong>Selected Node</strong>
+                                    <div><small>ID:</small> {selectedNode.id}</div>
+                                    <div><small>Label:</small> {selectedNode.label}</div>
+                                    <div style={{ marginTop: 8 }}><small>Full value:</small>
+                                        <div style={{ wordBreak: 'break-all' }}>{selectedNode.full}</div>
+                                    </div>
+                                    {selectedNode.rows && selectedNode.rows.length > 0 && (
+                                        <div style={{ marginTop: 10 }}>
+                                            <strong>Related Query Rows</strong>
+                                            <div style={{ maxHeight: 200, overflow: 'auto', marginTop: 8 }}>
+                                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                                    <thead>
+                                                        <tr>
+                                                            {selectedNode.rows && Object.keys(selectedNode.rows[0]).map((v) => (
+                                                                <th key={v} style={{ textAlign: 'left', padding: '6px', borderBottom: '1px solid #eee' }}>{v}</th>
+                                                            ))}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {selectedNode.rows.map((r, idx) => (
+                                                            <tr key={idx}>
+                                                                {Object.keys(r).map((k) => (
+                                                                    <td key={k} style={{ padding: '6px', borderBottom: '1px solid #fafafa', verticalAlign: 'top' }}>
+                                                                        {r[k] && r[k].value}
+                                                                    </td>
+                                                                ))}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
