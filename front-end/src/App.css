@@ -1,6 +1,11 @@
 .App {
   text-align: center;
-  background: linear-gradient(180deg, #FFE5B4 0%, #FFD59B 100%);
+  background: var(--app-bg) !important;
+}
+
+:root {
+  --app-bg: linear-gradient(180deg, #FFE5B4 0%, #FFD59B 100%);
+  --app-text: #333333;
 }
 
 .App-logo {

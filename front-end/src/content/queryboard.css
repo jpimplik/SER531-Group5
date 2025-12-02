@@ -1,0 +1,19 @@
+.query-board-page {
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(255, 255, 255, 0.9); /* slightly transparent white background for content */
+}
+
+.query-board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  /* use the same app background and text color */
+  background: var(--app-bg);
+  color: var(--app-text);
+  min-height: 100vh; /* ensure full-page background */
+}
+
+
+
