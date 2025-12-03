@@ -96,7 +96,7 @@ const SparqlEditor = ({ endpoint, onResults }) => {
         </div>
       )}
       <Editor
-        height="430px"
+        height="410px"
         defaultLanguage="sparql"
         value={query}
         onChange={handleChange}

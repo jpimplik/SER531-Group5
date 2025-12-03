@@ -4,7 +4,7 @@
   flex-direction: column;
   width: 95%;
   max-width: 95%;
-  min-height: 440px;
+  min-height: 440px; /* ensure the editor card is slightly taller */
 }
 
 .button-group {

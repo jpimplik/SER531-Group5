@@ -75,6 +75,7 @@
 @media (max-width: 900px) {
   .query-grid {
     display: block;
+  }
 
   .editor-area,
   .results-area,
@@ -141,5 +142,4 @@
   font-size: 18px;
   font-weight: 700;
   color: var(--app-text);
-}
 }
