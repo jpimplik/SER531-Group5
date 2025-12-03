@@ -16,9 +16,9 @@
   padding: 28px;
   background: var(--app-bg);
   color: var(--app-text);
-  min-height: 100vh;
+  height: 100vh; /* fix container to viewport height to avoid page-level scrolling */
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: hidden; /* hide page scrollbars; internal panels will scroll if needed */
 }
 
 /* ===========================
