@@ -1,31 +1,33 @@
 .sparql-editor-container {
-  margin-top: 20px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
-  width: 1200px;
-  max-width: 1200px;
-  position: relative;
+  width: 95%;
+  max-width: 95%;
+  min-height: 440px;
 }
 
 .button-group {
   margin-top: 10px;
   display: flex;
   gap: 0px;
+  justify-content: flex-end;
 }
 .execute-query-btn {
   margin-top: 10px;
-  padding: 12px 24px;
-  font-size: 24px;
+  padding: 10px 20px;
+  font-size: 18px;
   cursor: pointer;
-  background-color: #f08000;
+  background-color: #046006;
   border: none;
   border-radius: 10px;
   color: #ffffff;
-  width: 225px;
+  min-width: 160px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .execute-query-btn:hover {
-  background-color: #FFA500;
+  background-color: #058007;
   color: #ffffff;
   cursor: pointer;
 }
@@ -33,37 +35,18 @@
 .clear-query-btn {
   margin-top: 10px;
   margin-left: 10px;
-  padding: 12px 24px;
-  font-size: 24px;
+  padding: 10px 20px;
+  font-size: 18px;
   cursor: pointer;
   background-color: #C6011F;
   border: none;
   border-radius: 10px;
   color: #ffffff;
-  width: 225px;
+  min-width: 140px;
 }
 
 .clear-query-btn:hover {
   background-color: #FF0000;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.download-query-btn {
-  margin-top: 10px;
-  margin-left: 10px;
-  padding: 12px 24px;
-  font-size: 24px;
-  cursor: pointer;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  color: #ffffff;
-  width: 225px;
-}
-
-.download-query-btn:hover {
-  background-color: #45a049;
   color: #ffffff;
   cursor: pointer;
 }
@@ -100,6 +83,43 @@
   max-height: 300px;
   overflow: auto;
 }
+
+.error-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+  z-index: 9999;
+}
+.error-toggle:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.error-toggle:focus { outline: none; box-shadow: 0 0 0 3px rgba(240,128,0,0.12); }
+
+
+.error-popover {
+  position: absolute;
+  top: 64px;
+  right: 12px;
+  width: 340px;
+  max-width: calc(100% - 32px);
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 10px 30px rgba(12,18,30,0.12);
+  z-index: 99999;
+  padding: 8px;
+}
+.error-popover-header { font-weight: 700; padding: 6px 8px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+.error-popover-body { padding: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Fira Code', monospace; white-space: pre-wrap; color: #7b1a1a; }
+.error-popover-empty { padding: 8px; color: #2a7a2a; }
 
 @media (max-width: 1300px) {
   .sparql-editor-container {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './queryboard.css';
 import SparqlEditor from '../components/SparqlEditor.jsx';
 import QueryResultsPanel from '../components/QueryResultsPanel.jsx';
@@ -9,6 +9,7 @@ const QueryBoard = () => {
     const [graphElements, setGraphElements] = useState([]);
     const [layoutName, setLayoutName] = useState('cose');
     const [selectedNode, setSelectedNode] = useState(null);
+    const [lastResults, setLastResults] = useState(null);
 
     // Transform SPARQL JSON to cytoscape elements
     const sparqlToElements = (data) => {
@@ -65,37 +66,26 @@ const QueryBoard = () => {
             const elements = sparqlToElements(data);
             setGraphElements(elements);
             setSelectedNode(null);
+            setLastResults(data);
         } catch (e) {
             console.error('Failed to transform SPARQL results to graph', e);
         }
     };
 
     return (
-        <div className="query-board-container" style={{ alignItems: 'flex-start' }}>
-            {/* Two-column layout: editor on left, results+visualization on right */}
-            <div className="query-board-row" style={{ boxSizing: 'border-box' }}>
-                    <div className="query-writing-section query-editor-col">
-                    <h2>SPARQL Query Board</h2>
-                    <p>Write and execute your SPARQL queries here to explore food price data.</p>
+        <div className="query-board-container" style={{ alignItems: 'stretch' }}>
+            <div className="query-grid">
+                <div className="editor-area card">
+                    <h3 className="panel-title">SPARQL Query Board</h3>
                     <SparqlEditor endpoint="https://dbpedia.org/sparql" onResults={handleSparqlResults} />
                 </div>
 
-                <div className="query-side-col">
-                    {/* Query Results Section */}
-                    <div className="query-results-section">
-                        <h2>Query Results</h2>
-                        <p>Your query results will be displayed here automatically below the editor.</p>
-
-                        <div className="response-container" style={{ width: '100%', overflow: 'auto', maxHeight: '75vh', boxSizing: 'border-box' }}>
-                            {/* Optionally render a QueryResultsPanel component if available */}
-                            {typeof QueryResultsPanel !== 'undefined' && <QueryResultsPanel />}
+                <div className="viz-area card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <div>
+                            <h3 className="panel-title">Query Visualization</h3>
                         </div>
-                    </div>
-
-                    {/* Query Visualization Section */}
-                    <div className="query-visualization-section">
-                        <h2>Query Visualization</h2>
-                        <div style={{ marginBottom: 8 }}>
+                        <div>
                             <LayoutSelect
                                 label="Layout:"
                                 value={layoutName}
@@ -110,52 +100,56 @@ const QueryBoard = () => {
                                 ]}
                             />
                         </div>
-                        <div>
-                            {/* Cytoscape graph will render here */}
-                            <GraphViewer
-                                elements={graphElements}
-                                layout={{ name: layoutName }}
-                                onNodeClick={(data) => setSelectedNode(data)}
-                            />
+                    </div>
+                    <GraphViewer
+                        elements={graphElements}
+                        layout={{ name: layoutName }}
+                        onNodeClick={(data) => setSelectedNode(data)}
+                    />
 
-                            {selectedNode && (
-                                <div className="node-details" style={{ marginTop: 12, padding: 10, border: '1px solid rgba(0,0,0,0.06)', borderRadius: 6, background: '#fff' }}>
-                                    <strong>Selected Node</strong>
-                                    <div><small>ID:</small> {selectedNode.id}</div>
-                                    <div><small>Label:</small> {selectedNode.label}</div>
-                                    <div style={{ marginTop: 8 }}><small>Full value:</small>
-                                        <div style={{ wordBreak: 'break-all' }}>{selectedNode.full}</div>
-                                    </div>
-                                    {selectedNode.rows && selectedNode.rows.length > 0 && (
-                                        <div style={{ marginTop: 10 }}>
-                                            <strong>Related Query Rows</strong>
-                                            <div style={{ maxHeight: 200, overflow: 'auto', marginTop: 8 }}>
-                                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                                    <thead>
-                                                        <tr>
-                                                            {selectedNode.rows && Object.keys(selectedNode.rows[0]).map((v) => (
-                                                                <th key={v} style={{ textAlign: 'left', padding: '6px', borderBottom: '1px solid #eee' }}>{v}</th>
-                                                            ))}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {selectedNode.rows.map((r, idx) => (
-                                                            <tr key={idx}>
-                                                                {Object.keys(r).map((k) => (
-                                                                    <td key={k} style={{ padding: '6px', borderBottom: '1px solid #fafafa', verticalAlign: 'top' }}>
-                                                                        {r[k] && r[k].value}
-                                                                    </td>
-                                                                ))}
-                                                            </tr>
+                    {selectedNode && (
+                        <div className="node-details" style={{ marginTop: 12, padding: 10, border: '1px solid rgba(0,0,0,0.06)', borderRadius: 6, background: '#fff' }}>
+                            <strong>Selected Node</strong>
+                            <div><small>ID:</small> {selectedNode.id}</div>
+                            <div><small>Label:</small> {selectedNode.label}</div>
+                            <div style={{ marginTop: 8 }}><small>Full value:</small>
+                                <div style={{ wordBreak: 'break-all' }}>{selectedNode.full}</div>
+                            </div>
+                            {selectedNode.rows && selectedNode.rows.length > 0 && (
+                                <div style={{ marginTop: 10 }}>
+                                    <strong>Related Query Rows</strong>
+                                    <div style={{ maxHeight: 200, overflow: 'auto', marginTop: 8 }}>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                            <thead>
+                                                <tr>
+                                                    {selectedNode.rows && Object.keys(selectedNode.rows[0]).map((v) => (
+                                                        <th key={v} style={{ textAlign: 'left', padding: '6px', borderBottom: '1px solid #eee' }}>{v}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {selectedNode.rows.map((r, idx) => (
+                                                    <tr key={idx}>
+                                                        {Object.keys(r).map((k) => (
+                                                            <td key={k} style={{ padding: '6px', borderBottom: '1px solid #fafafa', verticalAlign: 'top' }}>
+                                                                {r[k] && r[k].value}
+                                                            </td>
                                                         ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             )}
                         </div>
+                    )}
+                </div>
+
+                <div className="results-area card">
+                    <h3 className="panel-title">Query Results</h3>
+                    <div className="response-container" style={{ width: '100%', overflow: 'auto', maxHeight: '65vh', boxSizing: 'border-box' }}>
+                        <QueryResultsPanel results={lastResults} />
                     </div>
                 </div>
             </div>
