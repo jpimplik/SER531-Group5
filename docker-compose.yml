@@ -26,7 +26,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./front-end:/app
+      - ./front-end/src:/app/src
+      - ./front-end/public:/app/public
       - /app/node_modules
     environment:
     - CHOKIDAR_USEPOLLING=true
