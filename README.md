@@ -10,9 +10,10 @@
 \
 🔸**Ontology Editor**: Protege
 \
-🔸**Triple Store**: GraphDB
+🔸**Triples Format**: Turtle (.ttl file)
 \
-🔸**SPARQL Server**: Apache Jena Fuseki
+🔸**Triple Store & SPARQL Server**: Apache Jena Fuseki
+
 
 ### Setup Instructions
 
