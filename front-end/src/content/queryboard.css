@@ -41,7 +41,7 @@
    =========================== */
 .query-grid {
   display: grid;
-  grid-template-columns: 2fr 2fr;
+  grid-template-columns: 2.5fr 3fr;
   grid-template-rows: minmax(220px, 48vh) auto;
   column-gap: 28px;
   row-gap: 20px;
