@@ -13,6 +13,7 @@ const GraphViewer = ({
   const cyRef = useRef(null);
 
   useEffect(() => {
+    let mounted = true;
     if (!containerRef.current) return;
 
     // destroy existing
@@ -21,7 +22,11 @@ const GraphViewer = ({
       cyRef.current = null;
     }
 
+    let chosenLayout = (layout && layout.name) || 'cose';
+
     const createCy = () => {
+      if (!mounted || !containerRef.current) return () => {};
+
       cyRef.current = cytoscape({
         container: containerRef.current,
         elements,
@@ -55,7 +60,8 @@ const GraphViewer = ({
             }
           }
         ],
-        layout,
+        // use the chosenLayout name (fallback handled below)
+        layout: { ...(layout || {}), name: chosenLayout },
         wheelSensitivity: 0.2,
         boxSelectionEnabled: false,
       });
@@ -84,7 +90,8 @@ const GraphViewer = ({
         tooltipEl.style.left = `${pos.x + 8}px`;
         tooltipEl.style.top = `${pos.y - 12}px`;
         tooltipEl.style.pointerEvents = 'none';
-        containerRef.current.appendChild(tooltipEl);
+        // append only if container still exists
+        if (containerRef.current) containerRef.current.appendChild(tooltipEl);
       };
 
       const removeTooltip = () => {
@@ -119,37 +126,52 @@ const GraphViewer = ({
       window.addEventListener('resize', onResize);
 
       return () => {
+        try { removeTooltip(); } catch (e) {}
         window.removeEventListener('resize', onResize);
       };
     };
 
+    let innerCleanup = () => {};
+
     if (layout && layout.name === 'cose-bilkent') {
       import('cytoscape-cose-bilkent')
         .then(mod => {
-          const plugin = mod.default || mod;
-          try { cytoscape.use(plugin); } catch (e) {}
+          const plugin = mod && (mod.default || mod);
+          if (plugin) {
+            try { cytoscape.use(plugin); } catch (e) { console.warn('Failed to register cose-bilkent plugin', e); }
+          } else {
+            console.warn('cose-bilkent plugin not found, falling back to "cose" layout');
+            chosenLayout = 'cose';
+          }
         })
-        .catch(() => {})
-        .finally(() => createCy());
+        .catch((err) => {
+          console.warn('Failed to load cytoscape-cose-bilkent, falling back to "cose" layout', err);
+          chosenLayout = 'cose';
+        })
+        .finally(() => {
+          if (!mounted) return;
+          innerCleanup = createCy() || (() => {});
+        });
     } else {
-      createCy();
+      innerCleanup = createCy() || (() => {});
     }
 
     return () => {
+      mounted = false;
+      try { innerCleanup(); } catch (e) {}
       if (cyRef.current) {
         try { cyRef.current.destroy(); } catch (e) {}
         cyRef.current = null;
       }
     };
-  }, [elements, JSON.stringify(layout), onNodeClick, onEdgeClick]);
+  }, [elements, layout && layout.name, onNodeClick, onEdgeClick]);
 
   return (
     <div className="graph-viewer-wrap" style={style}>
-      <div ref={containerRef} className="graph-viewer">
-        {(!elements || elements.length === 0) && (
-          <div className="graph-empty">No graph data yet — run a query to visualize results</div>
-        )}
-      </div>
+      <div ref={containerRef} className="graph-viewer" />
+      {(!elements || elements.length === 0) && (
+        <div className="graph-empty">No graph data yet — run a query to visualize results</div>
+      )}
     </div>
   );
 };

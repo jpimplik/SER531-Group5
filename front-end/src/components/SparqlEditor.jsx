@@ -6,7 +6,6 @@ import './SparqlEditor.css';
 const SparqlEditor = ({ endpoint, onResults }) => {
   const [query, setQuery] = useState('');
   const [error, setError] = useState(null);
-  const [results, setResults] = useState(null);
   const [showErrors, setShowErrors] = useState(false);
   const toggleRef = React.useRef(null);
   const popoverRef = React.useRef(null);
@@ -46,20 +45,33 @@ const SparqlEditor = ({ endpoint, onResults }) => {
 
     try {
       const url = `${endpoint}?query=${encodeURIComponent(query)}`;
+      console.debug('[SparqlEditor] executing query ->', url);
+
       const response = await fetch(url, {
         headers: { Accept: 'application/sparql-results+json' },
       });
+
+      if (!response.ok) {
+        const text = await response.text();
+        const msg = `Server returned ${response.status}: ${text}`;
+        console.error('[SparqlEditor] query failed:', msg);
+        setError(msg);
+        return;
+      }
+
       const data = await response.json();
-      setResults(data);
       if (onResults) onResults(data);
+
     } catch (err) {
+      console.error('[SparqlEditor] fetch error', err);
       setError(`Query execution failed: ${err.message}`);
+      if (onResults) onResults(null);
     }
   };
 
+
   return (
     <div className="sparql-editor-container">
-      {/* error toggle icon in top-right */}
       <button
         ref={toggleRef}
         aria-label={error ? 'Show syntax errors' : 'No syntax errors'}
@@ -68,14 +80,12 @@ const SparqlEditor = ({ endpoint, onResults }) => {
         onClick={() => setShowErrors(s => !s)}
       >
         {error ? (
-          /* Alert / warning triangle icon (larger) */
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
             <path d="M1 21h22L12 2 1 21z" fill="#C6011F" />
             <rect x="11" y="10" width="2" height="5" rx="1" fill="#fff" />
             <rect x="11" y="16" width="2" height="2" rx="1" fill="#fff" />
           </svg>
         ) : (
-          /* Check / tick icon when no errors (larger) */
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
             <circle cx="12" cy="12" r="10" fill="#16a34a" />
             <path d="M9 12.5l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -114,15 +124,9 @@ const SparqlEditor = ({ endpoint, onResults }) => {
       <div className="editor-controls">
         <div className="button-group">
           <button onClick={executeQuery} className="execute-query-btn"> Execute Query </button>
-          <button onClick={() => { setQuery(''); setResults(null); setError(null); }} className="clear-query-btn"> Reset Query </button>
+            <button onClick={() => { setQuery(''); setError(null); if (onResults) onResults(null); }} className="clear-query-btn"> Reset Query </button>
         </div>
       </div>
-      {/* previous inline error panel replaced by the top-right toggle + popover */}
-      {results && (
-        <div className="results-container">
-          <pre>{JSON.stringify(results, null, 2)}</pre>
-        </div>
-      )}
     </div>
   );
 };

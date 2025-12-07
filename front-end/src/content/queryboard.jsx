@@ -11,58 +11,60 @@ const QueryBoard = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [lastResults, setLastResults] = useState(null);
 
-    // Transform SPARQL JSON to cytoscape elements
     const sparqlToElements = (data) => {
-        const vars = (data && data.head && data.head.vars) || [];
-        const bindings = (data && data.results && data.results.bindings) || [];
+        const vars = data?.head?.vars || [];
+        const bindings = data?.results?.bindings || [];
         if (!vars.length || !bindings.length) return [];
 
-        // determine variable names for s/p/o
-        let sVar = vars.includes('s') ? 's' : (vars.includes('subject') ? 'subject' : vars[0]);
-        let pVar = vars.includes('p') ? 'p' : (vars.includes('predicate') ? 'predicate' : vars[1] || vars[0]);
-        let oVar = vars.includes('o') ? 'o' : (vars.includes('object') ? 'object' : vars[2] || vars[1] || vars[0]);
+        const sVar = vars.find(v => /sub|subject/i.test(v)) || vars[0];
+        const pVar = vars.find(v => /pred|predicate/i.test(v)) || vars[1] || vars[0];
+        const oVar = vars.find(v => /obj|object/i.test(v)) || vars[2] || vars[1] || vars[0];
 
         const nodesMap = new Map();
         const edges = [];
 
         const shortLabel = (v) => {
+            if (!v) return '';
             try {
-                if (v.startsWith('http')) {
-                    const parts = v.split(/[\/\#]/);
-                    return parts[parts.length-1] || v;
-                }
-                return v;
-            } catch (e) { return v; }
+            if (v.startsWith('http')) {
+                const parts = v.split(/[\/\#]/);
+                return parts[parts.length - 1] || v;
+            }
+            return v;
+            } catch (e) {
+            return v;
+            }
         };
 
         bindings.forEach((b, i) => {
-            const s = b[sVar] && b[sVar].value;
-            const p = b[pVar] && b[pVar].value;
-            const o = b[oVar] && b[oVar].value;
-            if (!s || !o) return;
+            const s = b[sVar]?.value;
+            const p = b[pVar]?.value;
+            const o = b[oVar]?.value;
 
-            if (!nodesMap.has(s)) {
-                nodesMap.set(s, { id: s, label: shortLabel(s), full: s, rows: [] });
-            }
-            if (!nodesMap.has(o)) {
-                nodesMap.set(o, { id: o, label: shortLabel(o), full: o, rows: [] });
+            if (!s || !o) {
+            console.warn("Skipping incomplete binding row:", b);
+            return;
             }
 
-            // attach the original binding row to both subject and object so clicking either shows the row
+            if (!nodesMap.has(s)) nodesMap.set(s, { id: s, label: shortLabel(s), full: s, rows: [] });
+            if (!nodesMap.has(o)) nodesMap.set(o, { id: o, label: shortLabel(o), full: o, rows: [] });
+
             nodesMap.get(s).rows.push(b);
             nodesMap.get(o).rows.push(b);
 
-            edges.push({ id: `e${i}`, source: s, target: o, label: p || '' });
+            edges.push({ id: `e${i}_${s}_${o}`, source: s, target: o, label: p || '' });
         });
 
         const nodes = Array.from(nodesMap.values()).map(n => ({ data: n }));
         const cyEdges = edges.map(e => ({ data: e }));
+
         return nodes.concat(cyEdges);
-    };
+        };
+
 
     const handleSparqlResults = (data) => {
-        // keep original results shown in editor results panel as well
         try {
+            console.log("RAW SPARQL RESULTS:", JSON.stringify(data, null, 2));
             const elements = sparqlToElements(data);
             setGraphElements(elements);
             setSelectedNode(null);
@@ -77,7 +79,8 @@ const QueryBoard = () => {
             <div className="query-grid">
                 <div className="editor-area card">
                     <h3 className="panel-title">SPARQL Query Board</h3>
-                    <SparqlEditor endpoint="https://dbpedia.org/sparql" onResults={handleSparqlResults} />
+                    {/* Prefer backend proxy endpoint for local development. Can be overridden with REACT_APP_SPARQL_URL. */}
+                    <SparqlEditor endpoint={'http://localhost:5000/sparql'} onResults={handleSparqlResults} />
                 </div>
 
                 <div className="viz-area card">
