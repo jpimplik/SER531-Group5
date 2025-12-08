@@ -111,7 +111,7 @@ const SparqlEditor = ({ endpoint, onResults }) => {
         value={query}
         onChange={handleChange}
         options={{
-          fontSize: 22,
+          fontSize: 20,
           minimap: { enabled: false },
           fontFamily: 'Fira Code, monospace',
           lineNumbers: 'on',

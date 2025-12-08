@@ -20,24 +20,35 @@ function Home() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={stability} className="App-logo" alt="logo" />
+        <div className="hero-card">
+          <img src={stability} className="App-logo" alt="logo" />
 
-        <h2>Welcome to FoodPriceNet!</h2>
+          <div className="hero-body">
+            <h2 className="hero-title">Welcome to FoodPriceNet!</h2>
 
-        <ul className="feature-list">
-          <li>📊 Explore food price trends over time</li>
-          <li>🔍 Run SPARQL queries with a simple UI</li>
-          <li>🌐 Built on open semantic web standards</li>
-        </ul>
+            <p className="tagline">Run SPARQL queries, visualize trends, and discover relationships in open data.</p>
 
-        <br />
+            <ul className="feature-list">
+              <li>📊 Explore food price trends</li>
+              <li>🔍 Run SPARQL queries</li>
+              <li>🌐 Open semantic web standards</li>
+            </ul>
 
-        <button
-          className="get-started-btn"
-          onClick={handleGetStarted}
-        >
-          Get Started ►
-        </button>
+            <div className="hero-actions">
+              <button
+                className="get-started-btn"
+                onClick={handleGetStarted}
+                aria-label="Get started"
+              >
+                <span>Get Started</span>
+                <svg className="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M5 12h14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 5l7 7-7 7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </header>
 
       <footer className="App-footer">
