@@ -26,15 +26,15 @@ The knowledge graph can assist in addressing queries in simple ways such as:
 
 ## 🎥 Application Demonstration
 ### Application Home Page
-![Homepage](front-end\src\assets\demo\homepage.png "Home Page")
+![Homepage](front-end/src/assets/demo/homepage.png "Home Page")
 ### Application Fuseki Server
-![Fuseki](front-end\src\assets\demo\fuseki-server.png "Fuseki Server")
+![Fuseki](front-end/src/assets/demo/fuseki-server.png "Fuseki Server")
 ### Sample Query 1 - Retrieve the number of triples for the FoodPriceNet KG
-![Query1](front-end\src\assets\demo\sample-1.png "Sample Query 1 - Retrieve the number of triples for the FoodPriceNet KG")
+![Query1](front-end/src/assets/demo/sample-1.png "Sample Query 1 - Retrieve the number of triples for the FoodPriceNet KG")
 ### Sample Query 2 - Retrieve all food categories stated in the FoodPriceNet KG
-![Query2](front-end\src\assets\demo\sample-2.png "Sample Query 2 - Retrieve all food categories stated in the FoodPriceNet KG")
+![Query2](front-end/src/assets/demo/sample-2.png "Sample Query 2 - Retrieve all food categories stated in the FoodPriceNet KG")
 ### Sample Query 3 - Retrieve the average CPI price per item in the FoodPriceNet KG
-![Query3](front-end\src\assets\demo\sample-8.png "Sample Query 3 - Retrieve the average CPI price per item in the FoodPriceNet KG")
+![Query3](front-end/src/assets/demo/sample-8.png "Sample Query 3 - Retrieve the average CPI price per item in the FoodPriceNet KG")
 
 
 ## 🏗️ Setup Instructions
