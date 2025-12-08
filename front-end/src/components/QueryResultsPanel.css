@@ -28,7 +28,23 @@
   overflow: auto;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Fira Code', monospace;
   white-space: pre-wrap;
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--muted);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* CSV/text view — use same styling as JSON but monospace for clarity */
+.results-csv {
+  background: linear-gradient(180deg,#fbfdff,#f7fbff);
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(7,27,39,0.04);
+  max-height: calc(72vh - 180px);
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Fira Code', monospace;
+  white-space: pre-wrap;
+  font-size: 15px;
   line-height: 1.45;
   color: var(--muted);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
@@ -43,7 +59,7 @@
 
 .results-toolbar { display: flex; gap: 8px; align-items: center; }
 .primary-group { display: inline-flex; border-radius: 10px; overflow: hidden; border: 1px solid rgba(7,27,39,0.06); background: linear-gradient(180deg, #ffffff, #fbfdff); box-shadow: 0 6px 18px rgba(2,6,23,0.04); }
-.primary-group .view-btn { border: none; padding: 10px 14px; background: transparent; cursor: pointer; font-weight: 700; color: #083d52; display: inline-flex; gap: 10px; align-items: center; font-size: 13px; }
+.primary-group .view-btn { border: none; padding: 10px 14px; background: transparent; cursor: pointer; font-weight: 700; color: #083d52; display: inline-flex; gap: 10px; align-items: center; font-size: 16px; }
 .primary-group .view-btn svg { opacity: 0.95; transform: translateY(1px); }
 .primary-group .view-btn span { line-height: 1; }
 .primary-group .view-btn:not(:last-child) { border-right: 1px solid rgba(7,27,39,0.04); }
@@ -62,14 +78,14 @@
 .pagination-controls { display: inline-flex; gap: 8px; align-items: center; margin-left: 8px; }
 .page-btn { border: 1px solid rgba(7,27,39,0.06); background: #fff; padding: 6px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(2,6,23,0.04); }
 .page-btn:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
-.page-info { font-size: 13px; color: rgba(0,0,0,0.65); padding: 0 6px; }
+.page-info { font-size: 18px; color: rgba(0,0,0,0.65); padding: 0 6px; }
 .page-size { border-radius: 6px; border: 1px solid rgba(7,27,39,0.06); padding: 6px 8px; background: #fff; font-weight:600; color:#0f4f68; }
 
 .results-table-wrap { overflow: auto; max-height: calc(72vh - 200px); border: 1px solid rgba(7,27,39,0.03); border-radius: 10px; padding: 8px; background: #fff; }
 .results-table { width: 100%; border-collapse: collapse; background: #fff; }
 .results-table { width: 100%; border-collapse: collapse; background: #fff; table-layout: fixed; }
 .results-table thead th { position: sticky; top: 0; background: linear-gradient(180deg,#ffffff,#fbfdff); z-index: 3; border-bottom: 1px solid rgba(7,27,39,0.06); padding: 12px; text-align: left; }
-.results-table th, .results-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #f4f6f8; vertical-align: middle; font-size: 13px; }
+.results-table th, .results-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #f4f6f8; vertical-align: middle; font-size: 15px; }
 .results-table tbody tr:nth-child(odd) { background: #fbfdff; }
 .results-table tbody tr:hover { background: #eef7fb; transform: translateZ(0); box-shadow: inset 0 0 0 9999px rgba(255,255,255,0.0); }
 .results-table th { font-weight: 700; color: #083d52; }
@@ -115,6 +131,16 @@
 
 @media (max-width: 600px) {
   .results-toolbar { flex-wrap: wrap; gap: 6px; }
+}
+
+/* Icon-only action button (no visible text) */
+.action-btn.icon-only {
+  padding: 6px;
+  width: 40px;
+  height: 40px;
+  gap: 0;
+  justify-content: center;
+  font-weight: 600;
 }
 
 @media (max-width: 420px) {

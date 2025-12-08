@@ -93,6 +93,23 @@ const QueryResultsPanel = ({ results }) => {
     URL.revokeObjectURL(url);
   };
 
+  const downloadJSON = () => {
+    try {
+      const jsonText = JSON.stringify(results, null, 2);
+      const blob = new Blob([jsonText], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'results.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.warn('Download JSON failed', e);
+    }
+  };
+
   const prevPage = () => setPage(p => Math.max(0, p - 1));
   const nextPage = () => setPage(p => Math.min(totalPages - 1, p + 1));
   const onPageSizeChange = (e) => setPageSize(Number(e.target.value) || 25);
@@ -166,31 +183,37 @@ const QueryResultsPanel = ({ results }) => {
           <div className="sub-toolbar">
             {view === 'csv' && (
               <>
-                <button className="action-btn" onClick={downloadCSV} title="Download CSV">
+                <button className="action-btn icon-only" onClick={downloadCSV} title="Download CSV" aria-label="Download CSV">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                     <path d="M12 3v12" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M8 11l4 4 4-4" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M21 21H3" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span>Download CSV</span>
                 </button>
-                <button className="action-btn" onClick={() => copyToClipboard(csvText)} title="Copy CSV">
+                <button className="action-btn icon-only" onClick={() => copyToClipboard(csvText)} title="Copy CSV" aria-label="Copy CSV">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                     <path d="M16 4H8a2 2 0 0 0-2 2v12h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" stroke="#0f4f68" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                     <rect x="3" y="8" width="12" height="12" rx="2" stroke="#0f4f68" strokeWidth="1.4" />
                   </svg>
-                  <span>Copy CSV</span>
                 </button>
               </>
             )}
             {view === 'json' && (
-              <button className="action-btn" onClick={() => copyToClipboard(JSON.stringify(results, null, 2))} title="Copy JSON">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <path d="M9 7s-1.5 1.5-1.5 4S9 15 9 15" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M15 7s1.5 1.5 1.5 4S15 15 15 15" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <span>Copy JSON</span>
-              </button>
+              <>
+                <button className="action-btn icon-only" onClick={downloadJSON} title="Download JSON" aria-label="Download JSON">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <path d="M12 3v12" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M8 11l4 4 4-4" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M21 21H3" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                <button className="action-btn icon-only" onClick={() => copyToClipboard(JSON.stringify(results, null, 2))} title="Copy JSON" aria-label="Copy JSON">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <path d="M9 7s-1.5 1.5-1.5 4S9 15 9 15" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M15 7s1.5 1.5 1.5 4S15 15 15 15" stroke="#0f4f68" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </>
             )}
             {view === 'table' && totalRows > 0 && (
               <div className="pagination-controls">
