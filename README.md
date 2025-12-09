@@ -39,9 +39,54 @@ The knowledge graph can assist in addressing queries in simple ways such as:
 
 ## 🏗️ Setup Instructions
 
-...
+Follow the steps below to build and run the application using Docker Compose.
 
-### Contributors:
+### 🔹Prerequisites
+
+Make sure the following are installed on your system:
+- Docker
+- Docker Compose (Docker Desktop which includes Compose)
+
+### 🔹Steps
+1. **Clone the Repository**
+```
+git clone https://github.com/jpimplik/SER531-Group5.git
+cd SER531-Group5
+```
+
+2. **Build and Run the Application**
+
+Run the following command from the project root:
+```
+docker compose up --build
+```
+
+This will:
+- Build all required images
+- Start all containers defined in the docker-compose.yml file
+
+3. **Access the Application**
+
+Once the containers are up, you can access the application at:
+```
+http://localhost:3000
+```
+
+4. **Stopping the Application**
+
+To stop all running containers:
+```
+docker compose down -v
+```
+
+5. **Rebuilding After Changes (optional)**
+
+If you update code or dependencies and want to rebuild:
+```
+docker compose up --build
+```
+
+## 🤝 Contributors
 
 1. Janhavi Pimplikar
 2. Ekta Anturkar
