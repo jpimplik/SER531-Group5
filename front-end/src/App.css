@@ -1,0 +1,139 @@
+.App {
+  text-align: center;
+  background: var(--app-bg) !important;
+  margin:auto;
+}
+
+:root {
+  --app-bg: linear-gradient(180deg, #FFE5B4 0%, #FFD59B 100%);
+  --app-text: #333333;
+}
+
+.App-logo {
+  height: 36vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-float 3s ease-in-out infinite;
+  }
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+h2 {
+  color: #333333;
+}
+
+.hero-card{
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(6px) saturate(120%);
+  border-radius: 16px;
+  padding: 40px 40px 32px;
+  box-shadow: 0 12px 36px rgba(12,18,30,0.10);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  max-width: 920px;
+}
+
+.hero-body{max-width:720px;display:flex;flex-direction:column;align-items:center}
+
+.hero-title{
+  color: #333333;
+  font-size: calc(22px + 1.6vmin);
+  font-weight: 800;
+  margin: 10px 0 10px;
+  letter-spacing: -0.02em;
+  text-align:center;
+}
+
+.tagline{
+  color: #4b5563;
+  margin: 10px 0 8px;
+  font-size: 1.4rem;
+  max-width: 500px;
+  text-align: center;
+}
+
+.feature-list{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  justify-content:center;
+  list-style:none;
+  padding:0;
+  margin:8px 0 30px;
+}
+.feature-list li{
+  background: rgba(255,255,255,0.95);
+  color: #666666;
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:1.15rem;
+  box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+}
+
+.get-started-btn {
+  padding: 16px 28px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(180deg,#f07a00 0%,#e66c00 100%);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  min-width: 260px;
+  color: #ffffff;
+  display:inline-flex;align-items:center;gap:12px;justify-content:center
+}
+
+.get-started-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 48px rgba(240,128,0,0.18);
+}
+
+.secondary-btn{
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(16,24,40,0.06);
+  border-radius: 12px;
+  color: #333333;
+  cursor: pointer;
+  display:inline-flex;align-items:center;gap:10px;justify-content:center
+}
+
+.hero-actions{display:flex;gap:16px;align-items:center;margin-top:20px}
+
+.App-footer {
+  background-color: transparent;
+  color: #333333;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+@keyframes App-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

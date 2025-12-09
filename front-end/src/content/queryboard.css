@@ -1,0 +1,145 @@
+/* ===========================
+   Page Container
+   =========================== */
+.query-board-page {
+  width: 100%;
+  max-width: 1280px;
+  margin: 24px auto;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.query-board-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+  background: var(--app-bg);
+  color: var(--app-text);
+  height: 100vh; /* fix container to viewport height to avoid page-level scrolling */
+  box-sizing: border-box;
+  overflow: hidden; /* hide page scrollbars; internal panels will scroll if needed */
+}
+
+/* ===========================
+   Card Styling (Editor, Results, Visualization)
+   =========================== */
+.card {
+  width: 100%;
+  background: rgba(255,255,255,0.98);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  border: 1px solid rgba(20,20,30,0.04);
+  padding: 16px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* ===========================
+   Grid Layout for Editor + Results + Visualization
+   =========================== */
+.query-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: minmax(220px, 48vh) auto;
+  column-gap: 28px;
+  row-gap: 20px;
+  width: 100%;
+  align-items: start;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.editor-area { grid-column: 1 / 2; grid-row: 1 / 2; display: flex; flex-direction: column; gap: 12px; min-width: 0; overflow: hidden; max-height: 48vh; }
+.results-area { grid-column: 2 / 3; grid-row: 1 / 2; display: flex; flex-direction: column; gap: 12px; min-width: 0; overflow: hidden; max-height: 48vh; }
+.viz-area { grid-column: 1 / 3; grid-row: 2 / 3; min-height: calc(100vh - 48vh - 80px); overflow: visible; }
+
+.query-grid > * { min-width: 0; box-sizing: border-box; }
+
+.editor-area .sparql-editor-container,
+.results-area .results-panel,
+.viz-area .graph-viewer-wrap {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.editor-area .sparql-editor-container { max-height: calc(48vh - 96px); overflow: auto; }
+.results-area .response-container { max-height: calc(48vh - 120px); overflow: auto; }
+
+.card { overflow: visible; }
+
+/* ===========================
+   Responsive Adjustments
+   =========================== */
+@media (max-width: 900px) {
+  .query-grid {
+    display: block;
+  }
+
+  .editor-area,
+  .results-area,
+  .viz-area {
+    width: 100%;
+    margin-bottom: 24px;
+    max-height: none;
+  }
+}
+
+@media(max-width: 768px) {
+  .query-board-container {
+    padding: 10px;
+  }
+
+  .query-editor-section, 
+  .query-results-section, 
+  .query-visualization-section {
+    max-width: 100%;
+  }
+}
+
+/* ===========================
+   Misc Styling
+   =========================== */
+.response-container,
+.query-results-container,
+.visualization-container {
+  width: 100%;
+  background: #fbfbfb;
+  border-radius: 8px;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.layout-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 10px 40px 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(10,10,20,0.08);
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path fill='%23666' d='M0 0 L5 6 L10 0 Z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  font-size: 13px;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  cursor: pointer;
+}
+
+.layout-select:focus {
+  outline: none;
+  border-color: #f08a00;
+  box-shadow: 0 6px 20px rgba(240,138,0,0.10);
+  transform: translateY(-1px);
+}
+
+.layout-select::-ms-expand { display: none; }
+
+.panel-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--app-text);
+}
