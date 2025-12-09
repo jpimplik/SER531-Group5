@@ -15,8 +15,10 @@ services:
       - FLASK_APP=app.py
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5000
+      - FUSEKI_URL=http://fuseki:3030/ds/query
     depends_on:
-      - fuseki
+      fuseki:
+        condition: service_started
     networks:
       - app-network
 
@@ -32,9 +34,9 @@ services:
       - ./front-end/public:/app/public
       - /app/node_modules
     environment:
-    - CHOKIDAR_USEPOLLING=true
-    - CHOKIDAR_INTERVAL=100
-    - REACT_APP_SPARQL_URL=http://backend:5000/sparql
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=100
+      - REACT_APP_SPARQL_URL=http://backend:5000/sparql
     depends_on:
       - backend
     networks:
@@ -46,11 +48,95 @@ services:
     ports:
       - "3030:3030"
     volumes:
-      - ./fuseki_data:/fuseki
-    command: --mem /ds
+      - ./datasets:/staging:ro          
+      - fuseki-data:/fuseki              
+    environment:
+      - ADMIN_PASSWORD=admin
+      - JVM_ARGS=-Xmx2g
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        # Create database directory
+        mkdir -p /fuseki/databases/ds
+        
+        # Check if database already has data
+        DATA_EXISTS=false
+        if [ -d "/fuseki/databases/ds" ] && [ "$(ls -A /fuseki/databases/ds 2>/dev/null)" ]; then
+          echo "=========================================="
+          echo "✓ Existing database found, skipping load"
+          echo "=========================================="
+          DATA_EXISTS=true
+        fi
+        
+        # Start Fuseki in background
+        /jena-fuseki/fuseki-server --loc=/fuseki/databases/ds --update --port=3030 /ds &
+        FUSEKI_PID=$$!
+        
+        # Wait for Fuseki to be ready
+        echo "Waiting for Fuseki to start..."
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+          if curl -s http://localhost:3030/\$\$/ping > /dev/null 2>&1; then
+            echo "✓ Fuseki is ready!"
+            break
+          fi
+          echo "Waiting... ($$i/10)"
+          sleep 2
+        done
+        
+        # Load datasets only if database is empty
+        if [ "$$DATA_EXISTS" = "false" ]; then
+          echo "=========================================="
+          echo "Loading datasets from /staging..."
+          echo "=========================================="
+          
+          # Load RDF/XML files
+          for file in /staging/*.rdf /staging/*.owl; do
+            if [ -f "$$file" ]; then
+              echo "Loading $$(basename $$file)..."
+              curl -s -X POST \
+                --data-binary @"$$file" \
+                -H "Content-Type: application/rdf+xml" \
+                "http://localhost:3030/ds/data?default"
+              echo "✓ Loaded $$(basename $$file)"
+            fi
+          done
+          
+          # Load Turtle files
+          for file in /staging/*.ttl; do
+            if [ -f "$$file" ]; then
+              echo "Loading $$(basename $$file)..."
+              curl -s -X POST \
+                --data-binary @"$$file" \
+                -H "Content-Type: text/turtle" \
+                "http://localhost:3030/ds/data?default"
+              echo "✓ Loaded $$(basename $$file)"
+            fi
+          done
+          
+          echo "=========================================="
+          echo "✓ All datasets loaded successfully!"
+          echo "=========================================="
+        fi
+        
+        echo ""
+        echo "=========================================="
+        echo "🚀 Your Application is ready!"
+        echo "=========================================="
+        echo "Frontend:  http://localhost:3000"
+        echo "Backend:   http://localhost:5000"
+        echo "Fuseki:    http://localhost:3030"
+        echo "=========================================="
+        echo ""
+        
+        # Keep Fuseki running
+        wait $$FUSEKI_PID
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  fuseki-data:

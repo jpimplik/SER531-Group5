@@ -21,8 +21,8 @@ const QueryResultsPanel = ({ results }) => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
 
-  const vars = results?.head?.vars || [];
-  const bindings = results?.results?.bindings || [];
+  const vars = useMemo(() => results?.head?.vars || [], [results]);
+  const bindings = useMemo(() => results?.results?.bindings || [], [results]);
 
   const totalRows = bindings.length;
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
@@ -50,7 +50,6 @@ const QueryResultsPanel = ({ results }) => {
 
   const mouseMoveHandlerRef = useRef(null);
   const mouseUpHandlerRef = useRef(null);
-
 
   const handleMouseDown = (index, e) => {
     e.preventDefault();
