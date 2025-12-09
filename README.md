@@ -36,6 +36,8 @@ The knowledge graph can assist in addressing queries in simple ways such as:
 ### Sample Query 3 - Retrieve the average CPI price per item in the FoodPriceNet KG
 ![Query3](front-end/src/assets/demo/sample-8.png "Sample Query 3 - Retrieve the average CPI price per item in the FoodPriceNet KG")
 
+[Click here](https://docs.google.com/document/d/1xqmQLcFyeZFCz-XPtyRC35CmkL7bJpV5zoMa8ajUYKY/edit?usp=sharing) to find more sample queries to run in the application!
+
 
 ## 🏗️ Setup Instructions
 
