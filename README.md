@@ -25,6 +25,9 @@ The knowledge graph can assist in addressing queries in simple ways such as:
 🔸**Triple Store & SPARQL Server**: Apache Jena Fuseki
 
 ## 🎥 Application Demonstration
+
+[Watch the video here!](https://youtu.be/mwzUrbjSdVY)
+
 ### Application Home Page
 ![Homepage](front-end/src/assets/demo/homepage.png "Home Page")
 ### Application Fuseki Server
