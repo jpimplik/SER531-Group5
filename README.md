@@ -23,6 +23,8 @@ The knowledge graph can assist in addressing queries in simple ways such as:
 🔸**Triples Format**: Turtle (.ttl file)
 \
 🔸**Triple Store & SPARQL Server**: Apache Jena Fuseki
+\
+🔸**Other Files**: [Google Drive](https://drive.google.com/file/d/1Scd7LAwHlb8SBmG1qZWacRipZ5kmQGqL/view?usp=sharing)
 
 ## 🎥 Application Demonstration
 
